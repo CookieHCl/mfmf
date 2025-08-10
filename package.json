@@ -1,0 +1,29 @@
+{
+  "name": "mfmf",
+  "version": "1.0.0",
+  "description": "markdown front matter fixer",
+  "homepage": "https://github.com/CookieHCl/mfmf#readme",
+  "bugs": {
+    "url": "https://github.com/CookieHCl/mfmf/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CookieHCl/mfmf.git"
+  },
+  "license": "MIT",
+  "author": "CookieHCl",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "packageManager": "yarn@4.9.2",
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
+}
