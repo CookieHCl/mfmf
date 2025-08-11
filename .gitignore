@@ -21,3 +21,4 @@
 # End of https://www.toptal.com/developers/gitignore/api/yarn
 
 dist/*
+node_modules/*

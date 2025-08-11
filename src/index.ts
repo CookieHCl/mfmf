@@ -11,7 +11,7 @@ export function transformMarkdownFile(filepath: string, instruction: Instruction
   const file = matter.read(filepath);
 
   const oldFrontmatter = file.data;
-  const newFrontmatter = transformFrontmatter(structuredClone(oldFrontmatter), instruction);
+  const newFrontmatter = transformFrontmatter(oldFrontmatter, instruction);
   file.data = newFrontmatter;
   console.log('[transformMarkdown]', { language: file.language, oldFrontmatter, newFrontmatter });
 
