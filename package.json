@@ -16,7 +16,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json",
     "start": "node dist/index.js",
     "test": "vitest",
     "test:run": "vitest run"
@@ -29,6 +29,7 @@
     "gray-matter": "^4.0.3"
   },
   "devDependencies": {
+    "@types/node": "^24.2.1",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
   }
