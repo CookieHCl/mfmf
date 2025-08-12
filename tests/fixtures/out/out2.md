@@ -1,0 +1,6 @@
+---
+categories:
+  - BLOG
+  - FUWARI
+---
+

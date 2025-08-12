@@ -1,5 +1,8 @@
-import { describe, expect, test } from 'vitest'
-import { transformFrontmatter } from '../../src/index.js'
+import { cp, mkdtemp, rm } from 'node:fs/promises';
+import { join } from 'node:path';
+import { afterAll, beforeAll, describe, expect, test } from 'vitest'
+import { transformFrontmatter, transformMarkdownFile } from '../../src/index.js'
+import { expectTwoFileEqual } from '../util.js';
 
 describe('transformFrontmatter', () => {
   test('transform frontmatter', () => {
@@ -41,5 +44,39 @@ describe('transformFrontmatter', () => {
   })
 })
 
-// transformMarkdownFile
-// TODO
+describe('transformMarkdownFile', () => {
+  const FIXTURE_DIR = './tests/fixtures/'
+  let inDir: string
+  const outDir = join(FIXTURE_DIR, 'out')
+
+  beforeAll(async () => {
+    inDir = await mkdtemp(FIXTURE_DIR)
+    await cp(join(FIXTURE_DIR, 'in'), inDir, { recursive: true })
+  })
+
+  afterAll(async () => {
+    await rm(inDir, { recursive: true })
+  })
+
+  test('transform frontmatter', () => {
+    transformMarkdownFile(join(inDir, 'in1.md'), (old) => {
+      old.title = 'Updated Title'
+      old.date = '2023-01-01 12:00:00'
+      delete old.categories
+      old.tags.push('2017')
+      return old;
+    })
+
+    expectTwoFileEqual(join(inDir, 'in1.md'), join(outDir, 'out1.md'))
+  })
+
+  test('replace frontmatter', () => {
+    transformMarkdownFile(join(inDir, 'in2.md'), (old) => {
+      return {
+        categories: ["BLOG", "FUWARI"]
+      };
+    })
+
+    expectTwoFileEqual(join(inDir, 'in2.md'), join(outDir, 'out2.md'))
+  })
+})
