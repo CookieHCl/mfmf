@@ -55,7 +55,16 @@ describe('transformMarkdownFile', () => {
   })
 
   afterAll(async () => {
-    await rm(inDir, { recursive: true })
+    const MAX_TRIES = 5
+    for (let i = 1; i <= MAX_TRIES; ++i) {
+      try {
+        await rm(inDir, { recursive: true, force: true })
+        return
+      } catch (e: any) {
+        if (e?.code !== 'EBUSY' || i === MAX_TRIES) throw e
+        await new Promise(r => setTimeout(r, 100))
+      }
+    }
   })
 
   test('transform frontmatter', () => {
