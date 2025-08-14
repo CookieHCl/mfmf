@@ -1,4 +1,4 @@
-import { writeFileSync } from 'node:fs';
+import { writeFile } from 'node:fs/promises';
 import matter from 'gray-matter';
 import { parse, stringify } from 'yaml';
 import { formatAllDates } from './utils.js';
@@ -10,7 +10,7 @@ export function transformFrontmatter(oldFrontmatter: Frontmatter, instruction: I
   return instruction(oldFrontmatter);
 }
 
-export function transformMarkdownFile(filepath: string, instruction: Instruction, dateFormatStr?: string) {
+export async function transformMarkdownFile(filepath: string, instruction: Instruction, dateFormatStr?: string) {
   const file = matter.read(filepath);
 
   // Transform frontmatter
@@ -41,5 +41,5 @@ export function transformMarkdownFile(filepath: string, instruction: Instruction
     newFile = file.stringify();
   }
 
-  writeFileSync(filepath, newFile);
+  await writeFile(filepath, newFile);
 }
