@@ -20,7 +20,7 @@ describe('transformFrontmatter', () => {
       return old;
     })
 
-    expect(newFrontmatter).toEqual({
+    expect(newFrontmatter).toStrictEqual({
       title: 'Updated Title',
       tags: ['LLM', 'Google', '2017'],
       date: '2023-01-01 12:00:00'
@@ -38,7 +38,7 @@ describe('transformFrontmatter', () => {
       };
     })
 
-    expect(newFrontmatter).toEqual({
+    expect(newFrontmatter).toStrictEqual({
       categories: ["BLOG", "FUWARI"]
     })
   })
