@@ -14,16 +14,16 @@ describe('transformFrontmatter', () => {
 
     const newFrontmatter = transformFrontmatter(oldFrontmatter, (old) => {
       old.title = 'Updated Title'
-      old.date = '2023-01-01 12:00:00'
+      old.date = new Date('2023-01-01 12:00:00')
       delete old.categories
-      old.tags.push('2017')
+      old.tags.push('Transformer')
       return old;
     })
 
     expect(newFrontmatter).toStrictEqual({
       title: 'Updated Title',
-      tags: ['LLM', 'Google', '2017'],
-      date: '2023-01-01 12:00:00'
+      tags: ['LLM', 'Google', 'Transformer'],
+      date: new Date('2023-01-01 12:00:00')
     })
   })
 
@@ -70,9 +70,9 @@ describe('transformMarkdownFile', () => {
   test('transform frontmatter', () => {
     transformMarkdownFile(join(inDir, 'in1.md'), (old) => {
       old.title = 'Updated Title'
-      old.date = '2023-01-01 12:00:00'
+      old.abbrlink = 100
       delete old.categories
-      old.tags.push('2017')
+      old.tags.push('Transformer')
       return old;
     })
 
@@ -87,5 +87,17 @@ describe('transformMarkdownFile', () => {
     })
 
     expectTwoFileEqual(join(inDir, 'in2.md'), join(outDir, 'out2.md'))
+  })
+
+  test('date update', () => {
+    transformMarkdownFile(join(inDir, 'in3.md'), (old) => {
+      old.dates = old.dates.map((date: Date) => {
+        date.setDate(date.getDate() + 1);
+        return date;
+      });
+      return old;
+    }, 'yyyy-MM-dd HH:mm:ss')
+
+    expectTwoFileEqual(join(inDir, 'in3.md'), join(outDir, 'out3.md'))
   })
 })

@@ -26,7 +26,9 @@
   ],
   "packageManager": "yarn@4.9.2",
   "dependencies": {
-    "gray-matter": "^4.0.3"
+    "date-fns": "^4.1.0",
+    "gray-matter": "^4.0.3",
+    "yaml": "^2.8.1"
   },
   "devDependencies": {
     "@types/node": "^24.2.1",
