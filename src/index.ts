@@ -9,20 +9,16 @@ type Instruction =
   | ((oldFrontmatter: Frontmatter) => Frontmatter)
   | string
   | jsonata.Expression;
-type CompiledInstruction = (oldFrontmatter: Frontmatter) => Frontmatter;
+type CompiledInstruction = (oldFrontmatter: Frontmatter) => Promise<Frontmatter>;
 
 function compileInstruction(instruction: Instruction): CompiledInstruction {
   if (typeof instruction === 'function') {
-    return instruction;
+    // wrap sync function into async function
+    return async (oldFrontmatter) => instruction(oldFrontmatter);
   }
 
   // get jsonata expression
-  let expression: jsonata.Expression;
-  if (typeof instruction === 'string') {
-    expression = jsonata(instruction);
-  } else {
-    expression = instruction;
-  }
+  const expression = (typeof instruction === 'string') ? jsonata(instruction) : instruction;
 
   // evaluate and merge with oldFrontmatter
   return async (oldFrontmatter) => {
@@ -47,9 +43,9 @@ function compileInstruction(instruction: Instruction): CompiledInstruction {
   }
 }
 
-export function transformFrontmatter(oldFrontmatter: Frontmatter, instruction: Instruction): Frontmatter {
+export async function transformFrontmatter(oldFrontmatter: Frontmatter, instruction: Instruction): Promise<Frontmatter> {
   const compiled = compileInstruction(instruction);
-  return compiled(oldFrontmatter);
+  return await compiled(oldFrontmatter);
 }
 
 export async function transformMarkdownFile(filepath: string, instruction: Instruction, dateFormatStr?: string) {
@@ -57,7 +53,7 @@ export async function transformMarkdownFile(filepath: string, instruction: Instr
 
   // Transform frontmatter
   const oldFrontmatter = file.data;
-  const newFrontmatter = transformFrontmatter(oldFrontmatter, instruction);
+  const newFrontmatter = await transformFrontmatter(oldFrontmatter, instruction);
   file.data = newFrontmatter;
 
   // Format date
