@@ -1061,6 +1061,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jsonata@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "jsonata@npm:2.1.0"
+  checksum: 10c0/3f7e56960dc7870969aede56262d500e444b55576d5d49b793d75f405cfc4729764a92189ed14d77912d1b2906bc9cd95fed4ebf63eb6b732af2878409d5a0de
+  languageName: node
+  linkType: hard
+
 "kind-of@npm:^6.0.0, kind-of@npm:^6.0.2":
   version: 6.0.3
   resolution: "kind-of@npm:6.0.3"
@@ -1117,6 +1124,7 @@ __metadata:
     "@types/node": "npm:^24.2.1"
     date-fns: "npm:^4.1.0"
     gray-matter: "npm:^4.0.3"
+    jsonata: "npm:^2.1.0"
     typescript: "npm:^5.9.2"
     vitest: "npm:^3.2.4"
     yaml: "npm:^2.8.1"

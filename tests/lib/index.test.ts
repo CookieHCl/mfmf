@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import { transformFrontmatter, transformMarkdownFile } from '../../src/index.js'
 import { expectTwoFileEqual } from '../utils.js';
+import jsonata from 'jsonata';
 
 describe('transformFrontmatter', () => {
   test('transform frontmatter', async () => {
@@ -27,6 +28,27 @@ describe('transformFrontmatter', () => {
     })
   })
 
+  test('transform frontmatter (jsonata string)', async () => {
+    const oldFrontmatter = {
+      title: 'Test Title',
+      categories: ['PAPER', 'AI'],
+      tags: ['LLM', 'Google']
+    }
+
+    const newFrontmatter = await transformFrontmatter(oldFrontmatter, `{
+      'title': 'Updated Title',
+      'abbrlink': 100,
+      'categories': null,
+      'tags': $append(tags, 'Transformer')
+    }`)
+
+    expect(newFrontmatter).toStrictEqual({
+      title: 'Updated Title',
+      tags: ['LLM', 'Google', 'Transformer'],
+      abbrlink: 100
+    })
+  })
+
   test('replace frontmatter', async () => {
     const oldFrontmatter = {
       title: 'Test Title'
@@ -37,6 +59,21 @@ describe('transformFrontmatter', () => {
         categories: ["BLOG", "FUWARI"]
       };
     })
+
+    expect(newFrontmatter).toStrictEqual({
+      categories: ["BLOG", "FUWARI"]
+    })
+  })
+
+  test('replace frontmatter (jsonata object)', async () => {
+    const oldFrontmatter = {
+      title: 'Test Title'
+    }
+
+    const newFrontmatter = await transformFrontmatter(oldFrontmatter, jsonata(`{
+      'title': null,
+      'categories': ["BLOG", "FUWARI"]
+    }`))
 
     expect(newFrontmatter).toStrictEqual({
       categories: ["BLOG", "FUWARI"]

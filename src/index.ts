@@ -2,12 +2,54 @@ import { writeFile } from 'node:fs/promises';
 import matter from 'gray-matter';
 import { parse, stringify } from 'yaml';
 import { formatAllDates } from './utils.js';
+import jsonata from 'jsonata';
 
 type Frontmatter = Record<string, any>;
-type Instruction = (oldFrontmatter: Frontmatter) => Frontmatter;
+type Instruction =
+  | ((oldFrontmatter: Frontmatter) => Frontmatter)
+  | string
+  | jsonata.Expression;
+type CompiledInstruction = (oldFrontmatter: Frontmatter) => Frontmatter;
+
+function compileInstruction(instruction: Instruction): CompiledInstruction {
+  if (typeof instruction === 'function') {
+    return instruction;
+  }
+
+  // get jsonata expression
+  let expression: jsonata.Expression;
+  if (typeof instruction === 'string') {
+    expression = jsonata(instruction);
+  } else {
+    expression = instruction;
+  }
+
+  // evaluate and merge with oldFrontmatter
+  return async (oldFrontmatter) => {
+    const result = await expression.evaluate(oldFrontmatter);
+
+    if (result === null || typeof result !== 'object' || Array.isArray(result)) {
+      throw new Error(`JSONata expression didn't returned object, got: ${result}`);
+    }
+
+    // 1. if key has value, overwrite
+    // 2. if key is null, remove it
+    const newFrontmatter = structuredClone(oldFrontmatter);
+    for (const [key, value] of Object.entries(result)) {
+      if (value === null) {
+        delete newFrontmatter[key];
+      } else {
+        newFrontmatter[key] = value;
+      }
+    }
+
+    return newFrontmatter;
+  }
+}
 
 export function transformFrontmatter(oldFrontmatter: Frontmatter, instruction: Instruction): Frontmatter {
-  return instruction(oldFrontmatter);
+  const compiled = compileInstruction(instruction);
+  return compiled(oldFrontmatter);
 }
 
 export async function transformMarkdownFile(filepath: string, instruction: Instruction, dateFormatStr?: string) {
@@ -19,7 +61,7 @@ export async function transformMarkdownFile(filepath: string, instruction: Instr
   file.data = newFrontmatter;
 
   // Format date
-  let newFile;
+  let newFile: string;
   if (dateFormatStr !== undefined) {
     if (file.language !== 'yaml') {
       throw new Error(`Unsupported file language: ${file.language}, formatting date is only supported in yaml`);
