@@ -22,7 +22,7 @@ function compileInstruction(instruction: Instruction): CompiledInstruction {
 
   // evaluate and merge with oldFrontmatter
   return async (oldFrontmatter) => {
-    const result = await expression.evaluate(oldFrontmatter);
+    const result = await expression.evaluate(formatAllDates(oldFrontmatter));
 
     if (result === null || typeof result !== 'object' || Array.isArray(result)) {
       throw new Error(`JSONata expression didn't return an object, got: ${result}`);
@@ -58,27 +58,14 @@ export async function transformMarkdownFile(filepath: string, instruction: Instr
   file.data = newFrontmatter;
 
   // Format date
-  let newFile: string;
-  if (dateFormatStr !== undefined) {
-    if (file.language !== 'yaml') {
-      throw new Error(`Unsupported file language: ${file.language}, formatting date is only supported in yaml`);
-    }
-
-    // Format using provided date format string
-    // use yaml instead of js-yaml to remove quotes
-    newFile = matter.stringify(file, formatAllDates(newFrontmatter, dateFormatStr), {
-      engines: {
-        yaml: {
-          parse: parse,
-          stringify: stringify
-        }
+  const newFile = matter.stringify(file, formatAllDates(newFrontmatter, dateFormatStr), {
+    engines: {
+      yaml: {
+        parse: parse,
+        stringify: stringify
       }
-    });
-  } else {
-    // Format using default method - date time string format
-    // https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-date-time-string-format
-    newFile = file.stringify();
-  }
+    }
+  });
 
   await writeFile(filepath, newFile);
 }

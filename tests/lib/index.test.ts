@@ -1,4 +1,4 @@
-import { cp, mkdtemp, rm } from 'node:fs/promises';
+import { cp, mkdtemp, readFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import { transformFrontmatter, transformMarkdownFile } from '../../src/index.js'
@@ -85,6 +85,7 @@ describe('transformMarkdownFile', () => {
   const FIXTURE_DIR = './tests/fixtures/'
   let inDir: string
   const outDir = join(FIXTURE_DIR, 'out')
+  const queryDir = join(FIXTURE_DIR, 'query')
 
   beforeAll(async () => {
     inDir = await mkdtemp(FIXTURE_DIR)
@@ -136,5 +137,19 @@ describe('transformMarkdownFile', () => {
     }, 'yyyy-MM-dd HH:mm:ss')
 
     await expectTwoFileEqual(join(inDir, 'in3.md'), join(outDir, 'out3.md'))
+  })
+
+  test('transform frontmatter (jsonata)', async () => {
+    const query = await readFile(join(queryDir, 'query4.jsonata'), 'utf-8')
+    await transformMarkdownFile(join(inDir, 'in4.md'), query)
+
+    await expectTwoFileEqual(join(inDir, 'in4.md'), join(outDir, 'out4.md'))
+  })
+
+  test('date update (jsonata)', async () => {
+    const query = await readFile(join(queryDir, 'query5.jsonata'), 'utf-8')
+    await transformMarkdownFile(join(inDir, 'in5.md'), query, 'yyyy-MM-dd HH:mm:ss')
+
+    await expectTwoFileEqual(join(inDir, 'in5.md'), join(outDir, 'out5.md'))
   })
 })

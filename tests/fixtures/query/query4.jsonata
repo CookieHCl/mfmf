@@ -1,0 +1,6 @@
+{
+  'title': 'Updated Title',
+  'abbrlink': 100,
+  'categories': null,
+  'tags': $append(tags, 'Transformer')
+}

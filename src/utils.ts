@@ -12,10 +12,30 @@ export function formatUTC(date: Date, formatStr: string): string {
 }
 
 // Format every date instance in the object
-export function formatAllDates(obj: any, dateFormatStr: string): any {
+export function formatAllDates(obj: any, dateFormatStr?: string): any {
+  if (typeof obj === 'string') {
+    // check if string is in date time string format
+    // https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-date-time-string-format
+    //
+    // Supports:
+    // YYYY-MM-DD
+    // YYYY-MM-DDTHH:mm(Z)
+    // YYYY-MM-DDTHH:mm:ss(Z)
+    // YYYY-MM-DDTHH:mm:ss.sss(Z)
+    const isoRegex = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2}(?:\.\d{3})?)?Z?)?$/;
+
+    if (isoRegex.test(obj)) {
+      // check if string is valid date
+      const date = new Date(obj);
+      if (!isNaN(date.getTime())) {
+        obj = date;
+      }
+    }
+  }
+
   if (obj instanceof Date) {
     // yaml is parsed as UTC, but format prints in local time...
-    return formatUTC(obj, dateFormatStr);
+    return dateFormatStr !== undefined ? formatUTC(obj, dateFormatStr) : obj.toISOString();
   }
 
   if (Array.isArray(obj)) {
