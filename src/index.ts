@@ -25,31 +25,32 @@ function compileInstruction(instruction: Instruction): CompiledInstruction {
     const result = await expression.evaluate(oldFrontmatter);
 
     if (result === null || typeof result !== 'object' || Array.isArray(result)) {
-      throw new Error(`JSONata expression didn't returned object, got: ${result}`);
+      throw new Error(`JSONata expression didn't return an object, got: ${result}`);
     }
 
     // 1. if key has value, overwrite
     // 2. if key is null, remove it
-    const newFrontmatter = structuredClone(oldFrontmatter);
     for (const [key, value] of Object.entries(result)) {
       if (value === null) {
-        delete newFrontmatter[key];
+        delete oldFrontmatter[key];
       } else {
-        newFrontmatter[key] = value;
+        oldFrontmatter[key] = value;
       }
     }
 
-    return newFrontmatter;
+    return oldFrontmatter;
   }
 }
 
 export async function transformFrontmatter(oldFrontmatter: Frontmatter, instruction: Instruction): Promise<Frontmatter> {
   const compiled = compileInstruction(instruction);
-  return await compiled(oldFrontmatter);
+  return await compiled(structuredClone(oldFrontmatter));
 }
 
 export async function transformMarkdownFile(filepath: string, instruction: Instruction, dateFormatStr?: string) {
-  const file = matter.read(filepath);
+  // WHAT
+  // Use empty option to disable caching
+  const file = matter.read(filepath, {});
 
   // Transform frontmatter
   const oldFrontmatter = file.data;
