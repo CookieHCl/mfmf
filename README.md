@@ -5,6 +5,14 @@
 Transforms frontmatter of markdown file using [JSONata](https://docs.jsonata.org/overview.html) or JavaScript(library only).  
 This package is intended to make it easy to migrate between Markdown blogs, such as [jekyll](https://jekyllrb.com/) or [hexo](https://hexo.io/docs/).\
 
+## Install
+
+```
+npm install @cookiehcl/mfmf
+pnpm install @cookiehcl/mfmf
+yarn add @cookiehcl/mfmf
+```
+
 ## Usage
 
 ### Basic concept
@@ -74,7 +82,7 @@ Transform frontmatter using instruction, then return new frontmatter.
 For example, if we run the following code:
 
 ```javascript
-import { transformFrontmatter } from 'mfmf'
+import { transformFrontmatter } from '@cookiehcl/mfmf'
 
 const oldFrontmatter = {
   title: 'Test Title',
