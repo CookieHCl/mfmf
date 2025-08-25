@@ -5,6 +5,20 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
+"@cookiehcl/mfmf@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@cookiehcl/mfmf@workspace:."
+  dependencies:
+    "@types/node": "npm:^24.2.1"
+    date-fns: "npm:^4.1.0"
+    gray-matter: "npm:^4.0.3"
+    jsonata: "npm:^2.1.0"
+    typescript: "npm:^5.9.2"
+    vitest: "npm:^3.2.4"
+    yaml: "npm:^2.8.1"
+  languageName: unknown
+  linkType: soft
+
 "@esbuild/aix-ppc64@npm:0.25.8":
   version: 0.25.8
   resolution: "@esbuild/aix-ppc64@npm:0.25.8"
@@ -1116,20 +1130,6 @@ __metadata:
   checksum: 10c0/c40efb5e5296e7feb8e37155bde8eb70bc57d731b1f7d90e35a092fde403d7697c56fb49334d92d330d6f1ca29a98142036d6480a12681133a0a1453164cb2f0
   languageName: node
   linkType: hard
-
-"mfmf@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "mfmf@workspace:."
-  dependencies:
-    "@types/node": "npm:^24.2.1"
-    date-fns: "npm:^4.1.0"
-    gray-matter: "npm:^4.0.3"
-    jsonata: "npm:^2.1.0"
-    typescript: "npm:^5.9.2"
-    vitest: "npm:^3.2.4"
-    yaml: "npm:^2.8.1"
-  languageName: unknown
-  linkType: soft
 
 "minimatch@npm:^9.0.4":
   version: 9.0.5
