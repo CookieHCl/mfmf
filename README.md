@@ -3,7 +3,7 @@
 **mfmf** - *markdown front matter fixer*
 
 Transforms frontmatter of markdown file using [JSONata](https://docs.jsonata.org/overview.html) or JavaScript(library only).  
-This package is intended to make it easy to migrate between Markdown blogs, such as [jekyll](https://jekyllrb.com/) or [hexo](https://hexo.io/docs/).\
+This package is intended to make it easy to migrate between Markdown blogs, such as [jekyll](https://jekyllrb.com/) or [hexo](https://hexo.io/docs/).
 
 ## Install
 
@@ -143,3 +143,40 @@ Transform markdown file at the given filepath. Markdown file will be **overwritt
 - `filepath`: A string that contains file path to markdown file.
 - `instruction`: Instruction that will convert frontmatter. (See [transformFrontmatter](#transformfrontmatter))
 - `dateFormatStr`: Optional date format string. If provided, dates will be formatted using this format. (See [Handling Date](#handling-date))
+
+For example, if we have the following markdown file named `input.md`:
+
+```markdown
+---
+title: Test Title
+date: 2025-01-01T12:00:00Z
+---
+
+# Test content
+
+HI!
+```
+
+and if we run the following code:
+
+```javascript
+import { transformMarkdownFile } from "@cookiehcl/mfmf";
+
+transformMarkdownFile("input.md", (old) => {
+  old.date.setFullYear(2026);
+  return old;
+}, "yyyy-MM-dd HH:mm:ss");
+```
+
+`input.md` will now look like this:
+
+```markdown
+---
+title: Test Title
+date: 2027-01-01 12:00:00
+---
+
+# Test content
+
+HI!
+```
