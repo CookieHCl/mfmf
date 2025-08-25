@@ -1,6 +1,7 @@
 import { format } from 'date-fns';
 
-// Format date instance in UTC
+// Format date instance as UTC time
+// yaml parses as UTC, but format prints as local time...
 export function formatUTC(date: Date, formatStr: string): string {
   // Add offset to "look like" UTC time
   const newDate = new Date(date.valueOf() + date.getTimezoneOffset() * 60 * 1000);
@@ -13,20 +14,26 @@ export function formatUTC(date: Date, formatStr: string): string {
 
 // Format every date instance in the object
 export function formatAllDates(obj: any, dateFormatStr?: string): any {
+  // Convert date time string to Date object
+  // This is done because JSONata returns string instead of Date objects
   if (typeof obj === 'string') {
-    // check if string is in date time string format
+    // Check if string is in date time string format
     // https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-date-time-string-format
     //
-    // Supports:
-    // YYYY-MM-DD
-    // YYYY-MM-DDTHH:mm(Z)
-    // YYYY-MM-DDTHH:mm:ss(Z)
-    // YYYY-MM-DDTHH:mm:ss.sss(Z)
-    const isoRegex = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2}(?:\.\d{3})?)?Z?)?$/;
+    // Supported formats:
+    // - YYYY-MM-DD
+    // - YYYY-MM-DDTHH:mm(UTC offset)
+    // - YYYY-MM-DDTHH:mm:ss(UTC offset)
+    // - YYYY-MM-DDTHH:mm:ss.sss(UTC offset)
+    // where (UTC offset) is either:
+    // - Z (UTC time)
+    // - [+-]HH:mm
+    const dateTimeRegex = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2}(?:\.\d{3})?)?(?:Z|[+-]\d{2}:\d{2})?)?$/;
 
-    if (isoRegex.test(obj)) {
-      // check if string is valid date
+    if (dateTimeRegex.test(obj)) {
       const date = new Date(obj);
+
+      // Check if string is valid date
       if (!isNaN(date.getTime())) {
         obj = date;
       }
@@ -34,7 +41,8 @@ export function formatAllDates(obj: any, dateFormatStr?: string): any {
   }
 
   if (obj instanceof Date) {
-    // yaml is parsed as UTC, but format prints in local time...
+    // If dateFormat is present, format date using it
+    // else, return ISO string (date time string format)
     return dateFormatStr !== undefined ? formatUTC(obj, dateFormatStr) : obj.toISOString();
   }
 
