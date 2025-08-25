@@ -1,6 +1,6 @@
 import { writeFile } from 'node:fs/promises';
 import matter from 'gray-matter';
-import { parse, stringify } from 'yaml';
+import YAML from 'yaml';
 import { formatAllDates } from './utils.js';
 import jsonata from 'jsonata';
 
@@ -62,9 +62,10 @@ export async function transformMarkdownFile(filepath: string, instruction: Instr
   // Format date
   const newFile = matter.stringify(file, formatAllDates(newFrontmatter, dateFormatStr), {
     engines: {
+      // use yaml instead of js-yaml to remove quotes
       yaml: {
-        parse: parse,
-        stringify: stringify
+        parse: YAML.parse,
+        stringify: YAML.stringify
       }
     }
   });

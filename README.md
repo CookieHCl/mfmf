@@ -9,8 +9,8 @@ This package is intended to make it easy to migrate between Markdown blogs, such
 
 ### Basic concept
 
-This package uses [gray-matter](https://github.com/jonschlinkert/gray-matter) to parse/stringify markdown file, and [yaml](https://eemeli.org/yaml/) to parse/stringify frontmatter.  
-If your frontmatter is not in yaml, you have to define your own engine.
+This package parse/stringify frontmatter from markdown file.  
+Only YAML frontmatter is supported.
 
 For example, look at this markdown file.
 
@@ -27,16 +27,7 @@ categories:
 HI!
 ```
 
-gray-matter will parse frontmatter like this,
-
-```yaml
-title: Test Title
-categories:
-  - PAPER
-  - AI
-```
-
-and yaml will parse it into a JavaScript object.
+mfmf will parse frontmatter into a JavaScript object.
 
 ```javascript
 {
@@ -49,7 +40,7 @@ and yaml will parse it into a JavaScript object.
 ```
 
 Now, you can transform this object using JSONata or JavaScript.  
-After that, yaml and gray-matter will stringify back to markdown file.
+After that, mfmf will stringify back to markdown file.
 
 ### Handling Date
 
